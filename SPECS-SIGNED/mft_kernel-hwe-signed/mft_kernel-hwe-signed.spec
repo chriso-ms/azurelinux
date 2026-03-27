@@ -3,9 +3,9 @@
 # The default %%__os_install_post macro ends up stripping the signatures off of the kernel module.
 %define __os_install_post %{__os_install_post_leave_signatures} %{nil}
 
-# hard code versions due to ADO bug:58993948
-%global target_azl_build_kernel_version 6.12.57.1
-%global target_kernel_release 6
+
+%global target_azl_build_kernel_version %azl_kernel_hwe_version
+%global target_kernel_release %azl_kernel_hwe_release
 %global target_kernel_version_full %{target_azl_build_kernel_version}-%{target_kernel_release}%{?dist}
 %global release_suffix _%{target_azl_build_kernel_version}.%{target_kernel_release}
 
@@ -15,7 +15,7 @@
 Name:            %{_name}-signed
 Summary:         %{_name} Kernel Module for the %{KVERSION} kernel
 Version:         4.33.0
-Release:         6%{release_suffix}%{?dist}
+Release:         7%{release_suffix}%{?dist}
 License:         Dual BSD/GPLv2
 Group:           System Environment/Kernel
 
@@ -91,6 +91,9 @@ popd
 /lib/modules/%{KVERSION}/updates/
 
 %changelog
+* Thu Mar 26 2026 Mykhailo Bykhovtsev <mbykhovtsev@microsoft.com> - 4.33.0-7_6.12.57.1.6
+- Tweak specs to use dynamic versioning for kernel
+
 * Fri Mar 06 2026 Suresh Babu Chalamalasetty <schalam@microsoft.com> - 4.33.0-6_6.12.57.1.6
 - Bump to match kernel-hwe.
 
