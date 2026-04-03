@@ -9,7 +9,7 @@
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name: openssl
 Version: 3.3.5
-Release: 4%{?dist}
+Release: 5%{?dist}
 Vendor:         Microsoft Corporation
 Distribution:   Azure Linux
 Source: https://github.com/openssl/openssl/releases/download/openssl-%{version}/openssl-%{version}.tar.gz
@@ -371,6 +371,9 @@ install -m644 %{SOURCE9} \
 %ldconfig_scriptlets libs
 
 %changelog
+* Thu Apr 2 2026 Lynsey Rydberg <lyrydber@microsoft.com> - 3.3.5-5
+- Rename FIPS provider config from fips_prov.cnf to fipsmodule.cnf to align with upstream OpenSSL.
+
 * Tue Feb 3 2026 Tobias Brick <tobiasb@microsoft.com> - 3.3.5-4
 - Enable switching between SymCrypt-OpenSSL and openssl-fips-provider.
 - Patch OpenSSL speed to skip algorithms not supported by the selected FIPS provider.
