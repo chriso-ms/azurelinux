@@ -1,0 +1,27 @@
+[components.mozjs128]
+
+# On aarch64, Rust code in libjsrust.a generates outline atomics helper functions
+# (__aarch64_ldadd*, __aarch64_cas*, etc.). The mozjs128 version script
+# "mozjs_128 { global: *; };" tags ALL symbols — including these helpers — under
+# the mozjs_128 version. This causes downstream consumers (cjs → cinnamon) to
+# acquire versioned undefined references (__aarch64_ldadd*@mozjs_128) that can
+# only be resolved from libmozjs-128.so. When cinnamon links against libcjs.so
+# without -lmozjs-128 on the link line, modern binutils (≥2.37, which defaults to
+# --no-allow-shlib-undefined for executables) reports these as undefined reference
+# errors — but only on aarch64 (x86_64 has no __aarch64_* symbols).
+#
+# The fix: add "local: __aarch64_*;" to the version script so these compiler
+# implementation details are not exported as part of the mozjs128 public ABI.
+# Consumers will instead resolve outline atomics from libgcc.a (static, hidden
+# by their own version scripts), matching Fedora's effective behavior.
+#
+# Ref: https://sourceware.org/binutils/docs/ld/VERSION.html
+[[components.mozjs128.overlays]]
+description = "Hide aarch64 outline atomics helpers from version script to prevent versioned symbol leaks to downstream consumers (fixes cinnamon aarch64 link failure)"
+type = "spec-prepend-lines"
+section = "%build"
+lines = [
+    '# Fix aarch64 outline atomics leaking through version script (global: *)',
+    '# These are compiler implementation details, not part of mozjs128 public ABI',
+    "find . -name symverscript.in 2>/dev/null | xargs -r sed -i '/global:/a\\    local: __aarch64_*;'",
+]
