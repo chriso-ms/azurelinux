@@ -67,7 +67,8 @@ if ! az sig image-definition show -r "$GALLERY_NAME" -g "$RESOURCE_GROUP_NAME" -
         --gallery-name "$GALLERY_NAME" \
         --resource-group "$RESOURCE_GROUP_NAME" \
         --location "$LOCATION" \
-        --os-type Linux
+        --os-type Linux \
+        --features "DiskControllerTypes=SCSI,NVMe"
 fi
 
 image_version="$(increment-version "$(get-image-version)")"
